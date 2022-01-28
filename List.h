@@ -108,7 +108,9 @@ inline List<T>::List()
 template<typename T>
 inline List<T>::List(const List<T>& otherList)
 {
-	this = otherList;
+	m_first = otherList.m_first;
+	m_last = otherList.m_last;
+	m_nodeCount = otherList.getLength();
 }
 
 template<typename T>
@@ -121,12 +123,7 @@ inline List<T>::~List()
 template<typename T>
 inline void List<T>::destroy()
 {
-	T nextNode = begin();
-	for (int i = 0; !isEmpty(); i++)
-	{
-		nextNode++;
-		delete nextNode.m_current.previous;
-	}
+	initialize();
 }
 
 template<typename T>
@@ -144,9 +141,9 @@ inline Iterator<T> List<T>::end() const
 template<typename T>
 inline bool List<T>::contains(const T object) const
 {
-	for (T i = m_first; i != nullptr; i++)
+	for (Node<T>* i = m_first; i != nullptr; i++)
 	{
-		if (i == object)
+		if (i->data == object)
 			return true;
 	}
 	return false;
@@ -155,17 +152,27 @@ inline bool List<T>::contains(const T object) const
 template<typename T>
 inline void List<T>::pushFront(const T& value)
 {
-	value.next = begin();
-	value.next.previous = value;
-	m_first = value;
+	Node<T>* newNode = new Node<T>(value);
+	newNode->next = m_first;
+	if(m_first != nullptr)
+	newNode->next->previous = newNode;
+	m_first = newNode;
+	if (m_last == nullptr)
+		m_last = newNode;
+	m_nodeCount++;
 }
 
 template<typename T>
 inline void List<T>::pushBack(const T& value)
 {
-	value.previous = end();
-	value.previous.next = value;
-	m_last = value;
+	Node<T>* newNode = new Node<T>(value);
+	newNode->previous = m_last;
+	if (m_last != nullptr)
+		newNode->previous->next = newNode;
+	m_last = newNode;
+	if (m_first == nullptr)
+		m_first = newNode;
+	m_nodeCount++;
 }
 
 template<typename T>
@@ -174,38 +181,55 @@ inline bool List<T>::insert(const T& value, int index)
 	if (index < 0 || index > m_nodeCount)
 		return false;
 
-	T node;
-	getData(node, index);
+	Node<T>* node = m_first;
+	Node<T>* newNode = new Node<T>(value);
+	
+	for (int i = 1; i < index; i++)
+		node = node->next;
 
-	value.previous = node;
-	value.next = node.next;
-	node.next.previous = value;
-	node.next = value;
+	if (node != m_last)
+	{
+		newNode->next = node->next;
+		node->next->previous = newNode;
+	}
+	if (index != 0)
+	{
+		newNode->previous = node;
+		node->next = newNode;
+	}
+	if (index == 0)
+	{
+		m_first = newNode;
+		node->previous = newNode;
+		newNode->next = node;
+	}
+	if(index == m_nodeCount)
+		m_last = newNode; 
+	m_nodeCount++;
+
 	return true;
 }
 
 template<typename T>
 inline bool List<T>::remove(const T& value)
 {
-	if (value == nullptr)
+	if (value == NULL)
 		return false;
 
 	bool nodeRemoved = false;
-	T indexNode = m_first;
+	Node<T>* indexNode = m_first;
 	for (int i = 0; i < m_nodeCount; i++)
 	{
-		if (indexNode == value)
+		if (indexNode->data == value)
 		{
-			indexNode.next.previous = indexNode.previous;
-			indexNode.previous.next = indexNode.next;
-			indexNode = nullptr;
-			nodeRemoved = true
-		}
-		indexNode++;
-	}
+			indexNode->next->previous = indexNode->previous;
+			indexNode->previous->next = indexNode->next;
+			nodeRemoved = true;
+			m_nodeCount--;
 
-	if (nodeRemoved)
-		m_nodeCount--;
+		}
+		indexNode = indexNode->next;
+	}
 
 	return nodeRemoved;
 }
@@ -213,11 +237,11 @@ inline bool List<T>::remove(const T& value)
 template<typename T>
 inline void List<T>::print() const
 {
-	T indexNode = m_first;
+	Node<T>* indexNode = m_first;
 	for (int i = 0; i < m_nodeCount; i++)
 	{
-		std::cout >> indexNode.m_current->data >> std::endl;
-		indexNode++;
+		std::cout << indexNode->data << std::endl;
+		indexNode = indexNode->next;
 	}
 }
 
@@ -238,11 +262,8 @@ inline bool List<T>::isEmpty() const
 template<typename T>
 inline bool List<T>::getData(Iterator<T>& iter, int index)
 {
-	T indexNode = m_first;
 	for (int i = 0; i < index; i++)
-		indexNode = indexNode.next;
-
-	iter.m_current = indexNode;
+		iter++;
 }
 
 template<typename T>
@@ -262,14 +283,20 @@ inline const List<T>& List<T>::operator=(const List<T>& otherList)
 template<typename T>
 inline void List<T>::sort()
 {
-	for (int i = 0; i < m_nodeCount; i++)
+	Node<T>* firstNode = m_first;
+	for (int i = 1; i < m_nodeCount; i++)
+	{
+		Node<T>* secondNode = firstNode->next;
 		for (int j = 0 + i; j < m_nodeCount; j++)
 		{
-			if (arr[i] > arr[j])
+			if (firstNode->data > secondNode->data)
 			{
-				T temp = arr[j];
-				arr[j] = arr[i];
-				arr[i] = temp;
+				T temp = secondNode->data;
+				secondNode->data = firstNode->data;
+				firstNode->data = temp;
 			}
+			secondNode = secondNode->next;
 		}
+		firstNode = firstNode->next;
+	}
 }

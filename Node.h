@@ -6,8 +6,8 @@ public:
 	Node();
 	Node(T value);
 
-	Node<T*> next;
-	Node<T*> previous;
+	Node<T>* next;
+	Node<T>* previous;
 	T data;
 };
 

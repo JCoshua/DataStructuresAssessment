@@ -2,10 +2,13 @@
 //
 
 #include <iostream>
+#include "Engine.h"
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    Engine game = Engine();
+
+    game.run();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
