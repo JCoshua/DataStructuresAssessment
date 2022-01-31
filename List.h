@@ -92,10 +92,17 @@ public:
 	int getLength() const;
 
 	const List<T>& operator =(const List<T>& otherList);
+
+	/// <summary>
+	/// Uses bubble sort to sort the list.
+	/// </summary>
 	void sort();
 private:
+	//The first node of the list
 	Node<T>* m_first;
+	//The last node of the list
 	Node<T>* m_last;
+	//The number of nodes in the list
 	int m_nodeCount;
 };
 
@@ -123,7 +130,18 @@ inline List<T>::~List()
 template<typename T>
 inline void List<T>::destroy()
 {
-	initialize();
+	Node<T>* nodeToDelete = m_first;
+	Node<T>* nextNode;
+	while(m_nodeCount != 0)
+	{
+
+		nextNode = nodeToDelete->next;
+		nodeToDelete = nullptr;
+		m_nodeCount--;
+		nodeToDelete = nextNode;
+	}
+	m_first = nullptr;
+	m_last = nullptr;
 }
 
 template<typename T>
@@ -141,7 +159,7 @@ inline Iterator<T> List<T>::end() const
 template<typename T>
 inline bool List<T>::contains(const T object) const
 {
-	for (Node<T>* i = m_first; i != nullptr; i++)
+	for (Node<T>* i = m_first; i != nullptr; i = i->next)
 	{
 		if (i->data == object)
 			return true;
@@ -152,59 +170,111 @@ inline bool List<T>::contains(const T object) const
 template<typename T>
 inline void List<T>::pushFront(const T& value)
 {
+	//Creates a new Node
 	Node<T>* newNode = new Node<T>(value);
+
+	//Make the first node the new node's next
 	newNode->next = m_first;
+
+	//If a first node exists
 	if(m_first != nullptr)
-	newNode->next->previous = newNode;
+		//Make the first node's previous the new node
+		newNode->next->previous = newNode;
+
+	//Make the new node the first node
 	m_first = newNode;
+
+	//If there is no last node
 	if (m_last == nullptr)
+		//Make the new node the last node
 		m_last = newNode;
+
+	//Increment the node count
 	m_nodeCount++;
 }
 
 template<typename T>
 inline void List<T>::pushBack(const T& value)
 {
+	//Creates a new Node
 	Node<T>* newNode = new Node<T>(value);
+
+	//Makes the last node the new node's previous
 	newNode->previous = m_last;
+
+	//If a last node exists
 	if (m_last != nullptr)
+		//Make the last node's next the new node
 		newNode->previous->next = newNode;
+
+	//Make the new node the last node
 	m_last = newNode;
+
+	//If there is no first node
 	if (m_first == nullptr)
+		//Make the new node the first node
 		m_first = newNode;
+
+	//Increment the node count
 	m_nodeCount++;
 }
 
 template<typename T>
 inline bool List<T>::insert(const T& value, int index)
 {
+	//Return false is the index is out of bounds
 	if (index < 0 || index > m_nodeCount)
 		return false;
 
+	//Create a node using the first node
 	Node<T>* node = m_first;
+
+	//Create a new node
 	Node<T>* newNode = new Node<T>(value);
 	
+	//Increment to the index of the List
 	for (int i = 1; i < index; i++)
 		node = node->next;
 
+	//if the incremented node is not the last node
 	if (node != m_last)
 	{
+		//Make the new node's next be the incremented node's next
 		newNode->next = node->next;
+		//Makes the incremented node's next's previous be the nde node
 		node->next->previous = newNode;
 	}
+	//if the incremented node is not the first node
 	if (index != 0)
 	{
+		//Make the new node's previous be the incremented node
 		newNode->previous = node;
+		//Makes the incremented node's next be the new node
 		node->next = newNode;
 	}
+
+	//If the index is at the start of the list
 	if (index == 0)
 	{
+		//If the first exists
+		if (m_first != nullptr)
+		{
+			//Make the incremented node's previous become the new node
+			node->previous = newNode;
+			//Makes the new node's next become the incremented node
+			newNode->next = node;
+		}
+
+		//Make the new node the first node
 		m_first = newNode;
-		node->previous = newNode;
-		newNode->next = node;
 	}
+
+	//If the index is at the end of the list
 	if(index == m_nodeCount)
+		//Make the new node the last node
 		m_last = newNode; 
+
+	//Increment the node counter
 	m_nodeCount++;
 
 	return true;
@@ -213,24 +283,55 @@ inline bool List<T>::insert(const T& value, int index)
 template<typename T>
 inline bool List<T>::remove(const T& value)
 {
+	//Return false if the value is null
 	if (value == NULL)
 		return false;
 
 	bool nodeRemoved = false;
+	int numberOfRemovedNodes = 0;
 	Node<T>* indexNode = m_first;
-	for (int i = 0; i < m_nodeCount; i++)
+	for (int i = 0; i
+		< m_nodeCount; i++)
 	{
+		//If the data of the node at the current index is equal to the value
 		if (indexNode->data == value)
 		{
-			indexNode->next->previous = indexNode->previous;
-			indexNode->previous->next = indexNode->next;
-			nodeRemoved = true;
-			m_nodeCount--;
+			//If the node is not the last node
+			if(indexNode != m_last)
+				//Set the node's next's previous to be the node's previous
+				indexNode->next->previous = indexNode->previous;
+			//If the node is the last node but not the first node
+			else if(indexNode != m_first)
+				//Make the nodes previous be the last node
+				m_last = indexNode->previous;
 
+			//If the node is not the first node
+			if (indexNode != m_first)
+				//Set the node's next's previous to be the node's next
+				indexNode->previous->next = indexNode->next;
+			//If the node is the first node but not the last node
+			else if (indexNode != m_last)
+				//Make the node's next be the first node
+				m_first = indexNode->next;
+
+			//If the node is the only node
+			if (indexNode == m_first && indexNode == m_last)
+			{
+				//Make both the first and last nodes null
+				m_first = nullptr;
+				m_last = nullptr;
+			}
+
+			indexNode = nullptr;
+			nodeRemoved = true;
+			//Increment the number of nodes removed
+			numberOfRemovedNodes++;
 		}
+		//Increment the node
 		indexNode = indexNode->next;
 	}
-
+	//Subtract the number of removed nodes from the node count
+	m_nodeCount -= numberOfRemovedNodes;
 	return nodeRemoved;
 }
 
@@ -283,20 +384,26 @@ inline const List<T>& List<T>::operator=(const List<T>& otherList)
 template<typename T>
 inline void List<T>::sort()
 {
+	//Create a new node equal to the first node
 	Node<T>* firstNode = m_first;
 	for (int i = 1; i < m_nodeCount; i++)
 	{
+		//Create a second new node equal to the second node
 		Node<T>* secondNode = firstNode->next;
 		for (int j = 0 + i; j < m_nodeCount; j++)
 		{
+			//If the first node's data is greater than the second's data
 			if (firstNode->data > secondNode->data)
 			{
+				//Swap the two values
 				T temp = secondNode->data;
 				secondNode->data = firstNode->data;
 				firstNode->data = temp;
 			}
+			//Increment the second node
 			secondNode = secondNode->next;
 		}
+		//Increment the first node
 		firstNode = firstNode->next;
 	}
 }

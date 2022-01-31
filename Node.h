@@ -6,8 +6,13 @@ public:
 	Node();
 	Node(T value);
 
+	//The node after this node
 	Node<T>* next;
+
+	//The node before this node
 	Node<T>* previous;
+
+	//The data this node holds
 	T data;
 };
 

@@ -44,17 +44,17 @@ inline Iterator<T> Iterator<T>::operator--()
 template<typename T>
 inline const bool Iterator<T>::operator==(const Iterator<T>& iter)
 {
-	return this == iter;
+	return m_current == iter.m_current;
 }
 
 template<typename T>
 inline const bool Iterator<T>::operator!=(const Iterator<T>& iter)
 {
-	return this != iter;
+	return m_current != iter.m_current;
 }
 
 template<typename T>
 inline T Iterator<T>::operator*()
 {
-	return m_current;
+	return m_current->data;
 }
