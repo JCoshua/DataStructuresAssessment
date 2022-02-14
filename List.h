@@ -376,9 +376,21 @@ inline int List<T>::getLength() const
 template<typename T>
 inline const List<T>& List<T>::operator=(const List<T>& otherList)
 {
-	m_first = otherList.m_first;
-	m_last = otherList.m_last;
-	m_nodeCount = otherList.m_nodeCount;
+	Node<T>* iterNode = new Node<T>();
+	m_first = iterNode;
+	Node<T>* copyNode = otherList.m_first;
+	for (int i = 0; i < otherList.getLength(); i++)
+	{
+		iterNode->data = copyNode->data;
+		iterNode->next = new Node<T>();
+		iterNode->next->previous = iterNode;
+		iterNode = iterNode->next;
+		copyNode = copyNode->next;
+		iterNode->previous->next = iterNode;
+	}
+	m_last = iterNode;
+	m_nodeCount = otherList.getLength();
+	return *this;
 }
 
 template<typename T>

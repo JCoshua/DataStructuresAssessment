@@ -13,5 +13,6 @@ public:
 private:
 	bool m_applicationShouldClose;
 	List<int> m_list;
+	List<int> m_2List;
 };
 

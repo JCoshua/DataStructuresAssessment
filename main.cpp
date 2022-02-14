@@ -3,9 +3,11 @@
 
 #include <iostream>
 #include "Engine.h"
+#include <time.h>
 
 int main()
 {
+    srand((unsigned int)time);
     Engine game = Engine();
 
     game.run();
