@@ -115,9 +115,7 @@ inline List<T>::List()
 template<typename T>
 inline List<T>::List(const List<T>& otherList)
 {
-	m_first = otherList.m_first;
-	m_last = otherList.m_last;
-	m_nodeCount = otherList.getLength();
+	this = otherList;
 }
 
 template<typename T>
@@ -125,6 +123,7 @@ inline List<T>::~List()
 {
 	m_first = nullptr;
 	m_last = nullptr;
+	m_nodeCount = 0;
 }
 
 template<typename T>
@@ -297,22 +296,30 @@ inline bool List<T>::remove(const T& value)
 		if (indexNode->data == value)
 		{
 			//If the node is not the last node
-			if(indexNode != m_last)
+			if (indexNode != m_last)
+			{
 				//Set the node's next's previous to be the node's previous
 				indexNode->next->previous = indexNode->previous;
+			}
 			//If the node is the last node but not the first node
-			else if(indexNode != m_first)
+			else if (indexNode != m_first)
+			{
 				//Make the nodes previous be the last node
 				m_last = indexNode->previous;
+			}
 
 			//If the node is not the first node
 			if (indexNode != m_first)
+			{
 				//Set the node's next's previous to be the node's next
 				indexNode->previous->next = indexNode->next;
+			}
 			//If the node is the first node but not the last node
 			else if (indexNode != m_last)
+			{
 				//Make the node's next be the first node
 				m_first = indexNode->next;
+			}
 
 			//If the node is the only node
 			if (indexNode == m_first && indexNode == m_last)
@@ -322,13 +329,16 @@ inline bool List<T>::remove(const T& value)
 				m_last = nullptr;
 			}
 
+			Node<T>* nextNode = indexNode->next;
 			indexNode = nullptr;
+			indexNode = nextNode;
 			nodeRemoved = true;
 			//Increment the number of nodes removed
 			numberOfRemovedNodes++;
 		}
-		//Increment the node
-		indexNode = indexNode->next;
+		else
+			indexNode = indexNode->next;
+
 	}
 	//Subtract the number of removed nodes from the node count
 	m_nodeCount -= numberOfRemovedNodes;
@@ -376,9 +386,12 @@ inline int List<T>::getLength() const
 template<typename T>
 inline const List<T>& List<T>::operator=(const List<T>& otherList)
 {
+	//Creates new nodes it iterate through
 	Node<T>* iterNode = new Node<T>();
-	m_first = iterNode;
 	Node<T>* copyNode = otherList.m_first;
+	m_first = iterNode;
+
+	//Copies the values of the other list to the first list
 	for (int i = 0; i < otherList.getLength(); i++)
 	{
 		iterNode->data = copyNode->data;

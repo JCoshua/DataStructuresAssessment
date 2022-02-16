@@ -2,15 +2,100 @@
 //
 
 #include <iostream>
-#include "Engine.h"
 #include <time.h>
+#include "List.h"
 
 int main()
 {
-    srand((unsigned int)time);
-    Engine game = Engine();
+	srand((unsigned int)time);
+	bool m_applicationShouldClose = false;
+	List<int> m_list;
 
-    game.run();
+	while (!m_applicationShouldClose)
+	{
+		int input = -1;
+		std::cout << "Select an option" << std::endl;
+		std::cout << "1. Add Number" << std::endl;
+		std::cout << "2. Remove Number" << std::endl;
+		std::cout << "3. Sort the List" << std::endl;
+		std::cout << "4. Reset the list" << std::endl;
+		std::cin >> input;
+		system("cls");
+		if (input == 1)
+		{
+			std::cout << "Select an option" << std::endl;
+			std::cout << "1. Add to front" << std::endl;
+			std::cout << "2. Add to back" << std::endl;
+			std::cout << "3. Add to specific location" << std::endl;
+			std::cin >> input;
+			system("cls");
+
+			if (input == 1)
+			{
+				std::cout << "Please insert a Number" << std::endl;
+				std::cin >> input;
+				m_list.pushFront(input);
+				system("cls");
+				std::cout << "Number Added" << std::endl;
+			}
+			else if(input == 2)
+			{
+				std::cout << "Please insert a Number" << std::endl;
+				std::cin >> input;
+				m_list.pushBack(input);
+				system("cls");
+				std::cout << "Number Added" << std::endl;
+			}
+			else if (input == 3)
+			{
+				int secondInput;
+				std::cout << "Please insert a Number" << std::endl;
+				std::cin >> input;
+
+				std::cout << "Please insert the numerical location in the list the value will be placed" << std::endl;
+				std::cin >> secondInput;
+				
+				m_list.insert(input, secondInput);
+				system("cls");
+				std::cout << "Number Added" << std::endl;
+			}
+			else
+			{
+				std::cout << "Invalid Input" << std::endl;
+
+			}
+		}
+		else if (input == 2)
+		{
+			std::cout << "Please insert a Number" << std::endl;
+			std::cin >> input;
+			m_list.remove(input);
+			system("cls");
+			std::cout << "Number Removed" << std::endl;
+		}
+		else if (input == 3)
+		{
+			m_list.sort();
+			system("cls");
+			std::cout << "List Sorted" << std::endl;
+		}
+		else if (input == 4)
+		{
+			m_list.destroy();
+			m_list.initialize();
+			system("cls");
+			std::cout << "List Reset" << std::endl;
+		}
+		else
+		{
+			system("cls");
+			std::cout << "Invalid Input" << std::endl;
+		}
+
+		m_list.print();
+		system("pause");
+		system("cls");
+	}
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
