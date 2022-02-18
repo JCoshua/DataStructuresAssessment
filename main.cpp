@@ -2,12 +2,10 @@
 //
 
 #include <iostream>
-#include <time.h>
 #include "List.h"
 
 int main()
 {
-	srand((unsigned int)time);
 	bool m_applicationShouldClose = false;
 	List<int> m_list;
 
@@ -19,6 +17,7 @@ int main()
 		std::cout << "2. Remove Number" << std::endl;
 		std::cout << "3. Sort the List" << std::endl;
 		std::cout << "4. Reset the list" << std::endl;
+		std::cout << "5. Exit" << std::endl;
 		std::cin >> input;
 		system("cls");
 		if (input == 1)
@@ -86,15 +85,22 @@ int main()
 			system("cls");
 			std::cout << "List Reset" << std::endl;
 		}
+		else if (input == 5)
+		{
+			m_applicationShouldClose = true;
+		}
 		else
 		{
 			system("cls");
 			std::cout << "Invalid Input" << std::endl;
 		}
 
-		m_list.print();
-		system("pause");
-		system("cls");
+		if (!m_applicationShouldClose)
+		{
+			m_list.print();
+			system("pause");
+			system("cls");
+		}
 	}
 }
 
