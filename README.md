@@ -1,6 +1,6 @@
 # Linked List Read Me
 ## Overview
-The UI for the linked list allows the user to add, remove, sort, and reset the Linked List using the function of the Linked List.
+The UI for the linked list allows the user to add, remove, sort, and reset the Linked List.
 
 ## Controls
 The controls is entering numbers when prompted.
