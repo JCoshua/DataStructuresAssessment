@@ -9,6 +9,9 @@ int main()
 	bool m_applicationShouldClose = false;
 	List<int> m_list;
 
+	//This is a simple UI to help the user to interact with the list
+	//The UI is not amazing but it is more efficency over style.
+	//The user just uses the numpad to go through the menus as well as to add and remove numbers
 	while (!m_applicationShouldClose)
 	{
 		int input = -1;
@@ -59,10 +62,7 @@ int main()
 				std::cout << "Number Added" << std::endl;
 			}
 			else
-			{
 				std::cout << "Invalid Input" << std::endl;
-
-			}
 		}
 		else if (input == 2)
 		{
@@ -86,9 +86,7 @@ int main()
 			std::cout << "List Reset" << std::endl;
 		}
 		else if (input == 5)
-		{
 			m_applicationShouldClose = true;
-		}
 		else
 		{
 			system("cls");
