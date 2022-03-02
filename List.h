@@ -115,7 +115,23 @@ inline List<T>::List()
 template<typename T>
 inline List<T>::List(const List<T>& otherList)
 {
-	this = otherList;
+	//Creates new nodes it iterate through
+	Node<T>* iterNode = new Node<T>();
+	Node<T>* copyNode = otherList.m_first;
+	m_first = iterNode;
+
+	//Copies the values of the other list to the first list
+	for (int i = 0; i < otherList.getLength(); i++)
+	{
+		iterNode->data = copyNode->data;
+		iterNode->next = new Node<T>();
+		iterNode->next->previous = iterNode;
+		iterNode = iterNode->next;
+		copyNode = copyNode->next;
+		iterNode->previous->next = iterNode;
+	}
+	m_last = iterNode;
+	m_nodeCount = otherList.getLength();
 }
 
 template<typename T>
@@ -133,7 +149,6 @@ inline void List<T>::destroy()
 	Node<T>* nextNode;
 	while(m_nodeCount != 0)
 	{
-
 		nextNode = nodeToDelete->next;
 		nodeToDelete = nullptr;
 		m_nodeCount--;
@@ -373,8 +388,11 @@ inline bool List<T>::isEmpty() const
 template<typename T>
 inline bool List<T>::getData(Iterator<T>& iter, int index)
 {
+	if (iter == nullptr)
+		return false;
 	for (int i = 0; i < index; i++)
 		iter++;
+	return true;
 }
 
 template<typename T>

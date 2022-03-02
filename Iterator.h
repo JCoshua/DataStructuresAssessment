@@ -32,13 +32,15 @@ inline Iterator<T>::Iterator(Node<T>* node)
 template<typename T>
 inline Iterator<T> Iterator<T>::operator++()
 {
-	return m_current->next;
+	m_current = m_current->next;
+	return m_current;
 }
 
 template<typename T>
 inline Iterator<T> Iterator<T>::operator--()
 {
-	return m_current->previous;
+	m_current = m_current->previous;
+	return m_current;
 }
 
 template<typename T>
